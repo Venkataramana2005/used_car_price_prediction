@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarPrice AI - Used Car Price Predictor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="./styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <header>
+        <div class="logo">CarPrice AI</div>
+        <div class="status">
+            <span class="status-dot"></span>
+            <span id="apiStatus">API Connected</span>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Predict Your <span class="highlight">Used Car's Value</span></h1>
+        <p>AI-powered price predictions based on real market data. Get instant estimates and compare multiple vehicles.</p>
+    </section>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('predict')">Single Prediction</button>
+            <button class="tab" onclick="switchTab('compare')">Compare Cars</button>
+        </div>
+
+        <!-- Single Prediction Tab -->
+        <div id="predict-tab" class="tab-content active">
+            <div class="card">
+                <form id="predictForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Car Name</label>
+                            <input type="text" name="car_name" placeholder="e.g., Maruti Alto" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Brand</label>
+                            <input type="text" name="brand" placeholder="e.g., Maruti" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Model</label>
+                            <input type="text" name="model" placeholder="e.g., Alto" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Vehicle Age (years)</label>
+                            <input type="number" name="vehicle_age" min="1" max="30" placeholder="e.g., 5" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kilometers Driven</label>
+                            <input type="number" name="km_driven" min="100" max="5000000" placeholder="e.g., 50000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Seller Type</label>
+                            <select name="seller_type" required>
+                                <option value="Dealer">Dealer</option>
+                                <option value="Individual">Individual</option>
+                                <option value="Trusted Dealer">Trusted Dealer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Fuel Type</label>
+                            <select name="fuel_type" required>
+                                <option value="Diesel">Diesel</option>
+                                <option value="Petrol">Petrol</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Transmission</label>
+                            <select name="transmission_type" required>
+                                <option value="Manual">Manual</option>
+                                <option value="Automatic">Automatic</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Mileage (km/l)</label>
+                            <input type="number" step="0.01" name="mileage" min="1" max="100" placeholder="e.g., 15.5" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Engine (cc)</label>
+                            <input type="number" name="engine" min="100" max="10000" placeholder="e.g., 1200" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Max Power (bhp)</label>
+                            <input type="number" step="0.01" name="max_power" min="10" max="1000" placeholder="e.g., 75.5" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Seats</label>
+                            <input type="number" name="seats" min="2" max="10" placeholder="e.g., 5" required>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn">Predict Price</button>
+                        <button type="reset" class="btn btn-secondary">Reset Form</button>
+                    </div>
+                </form>
+
+                <div class="loading" id="predictLoading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 1rem; color: var(--text-secondary);">Analyzing vehicle data...</p>
+                </div>
+
+                <div class="error" id="predictError"></div>
+
+                <div id="predictResult"></div>
+            </div>
+        </div>
+
+        <!-- Compare Cars Tab -->
+        <div id="compare-tab" class="tab-content">
+            <div class="card">
+                <h2 style="font-family: 'Orbitron', sans-serif; margin-bottom: 2rem;">Compare Two Vehicles</h2>
+                <form id="compareForm">
+                    <h3 style="color: var(--primary); margin-bottom: 1rem;">Car 1</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Car Name</label>
+                            <input type="text" name="car1_car_name" placeholder="e.g., Honda City" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Brand</label>
+                            <input type="text" name="car1_brand" placeholder="e.g., Honda" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Model</label>
+                            <input type="text" name="car1_model" placeholder="e.g., City" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Vehicle Age (years)</label>
+                            <input type="number" name="car1_vehicle_age" min="1" max="30" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kilometers Driven</label>
+                            <input type="number" name="car1_km_driven" min="100" max="5000000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Seller Type</label>
+                            <select name="car1_seller_type" required>
+                                <option value="Dealer">Dealer</option>
+                                <option value="Individual">Individual</option>
+                                <option value="Trusted Dealer">Trusted Dealer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Fuel Type</label>
+                            <select name="car1_fuel_type" required>
+                                <option value="Diesel">Diesel</option>
+                                <option value="Petrol">Petrol</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Transmission</label>
+                            <select name="car1_transmission_type" required>
+                                <option value="Manual">Manual</option>
+                                <option value="Automatic">Automatic</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Mileage (km/l)</label>
+                            <input type="number" step="0.01" name="car1_mileage" min="1" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Engine (cc)</label>
+                            <input type="number" name="car1_engine" min="100" max="10000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Max Power (bhp)</label>
+                            <input type="number" step="0.01" name="car1_max_power" min="10" max="1000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Seats</label>
+                            <input type="number" name="car1_seats" min="2" max="10" required>
+                        </div>
+                    </div>
+
+                    <h3 style="color: var(--accent); margin: 2rem 0 1rem;">Car 2</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Car Name</label>
+                            <input type="text" name="car2_car_name" placeholder="e.g., Hyundai Verna" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Brand</label>
+                            <input type="text" name="car2_brand" placeholder="e.g., Hyundai" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Model</label>
+                            <input type="text" name="car2_model" placeholder="e.g., Verna" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Vehicle Age (years)</label>
+                            <input type="number" name="car2_vehicle_age" min="1" max="30" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kilometers Driven</label>
+                            <input type="number" name="car2_km_driven" min="100" max="5000000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Seller Type</label>
+                            <select name="car2_seller_type" required>
+                                <option value="Dealer">Dealer</option>
+                                <option value="Individual">Individual</option>
+                                <option value="Trusted Dealer">Trusted Dealer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Fuel Type</label>
+                            <select name="car2_fuel_type" required>
+                                <option value="Diesel">Diesel</option>
+                                <option value="Petrol">Petrol</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Transmission</label>
+                            <select name="car2_transmission_type" required>
+                                <option value="Manual">Manual</option>
+                                <option value="Automatic">Automatic</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Mileage (km/l)</label>
+                            <input type="number" step="0.01" name="car2_mileage" min="1" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Engine (cc)</label>
+                            <input type="number" name="car2_engine" min="100" max="10000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Max Power (bhp)</label>
+                            <input type="number" step="0.01" name="car2_max_power" min="10" max="1000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Seats</label>
+                            <input type="number" name="car2_seats" min="2" max="10" required>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn">Compare Prices</button>
+                        <button type="reset" class="btn btn-secondary">Reset Form</button>
+                    </div>
+                </form>
+
+                <div class="loading" id="compareLoading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 1rem; color: var(--text-secondary);">Comparing vehicles...</p>
+                </div>
+
+                <div class="error" id="compareError"></div>
+
+                <div id="compareResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 CarPrice AI. Powered by Machine Learning & FastAPI.</p>
+    </footer>
+
+    <script>
+        // Configuration
+        const API_BASE_URL = 'http://127.0.0.1:8080';
+
+        // Tab Switching
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+
+            // Clear results
+            document.getElementById('predictResult').innerHTML = '';
+            document.getElementById('compareResult').innerHTML = '';
+        }
+
+        // Check API Status
+        async function checkAPIStatus() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/`);
+                const data = await response.json();
+                document.getElementById('apiStatus').textContent = 'API Connected';
+            } catch (error) {
+                document.getElementById('apiStatus').textContent = 'API Offline';
+                document.querySelector('.status-dot').style.background = 'var(--accent)';
+            }
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Single Prediction Form
+        document.getElementById('predictForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {};
+            formData.forEach((value, key) => {
+                // Convert numeric fields
+                if (['vehicle_age', 'km_driven', 'engine', 'seats'].includes(key)) {
+                    data[key] = parseInt(value);
+                } else if (['mileage', 'max_power'].includes(key)) {
+                    data[key] = parseFloat(value);
+                } else {
+                    data[key] = value;
+                }
+            });
+
+            const loading = document.getElementById('predictLoading');
+            const errorDiv = document.getElementById('predictError');
+            const resultDiv = document.getElementById('predictResult');
+
+            loading.classList.add('active');
+            errorDiv.classList.remove('active');
+            resultDiv.innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/predict/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Prediction failed');
+                }
+
+                const result = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="result-card">
+                        <h3>Estimated Selling Price</h3>
+                        <div class="price">${formatCurrency(result.selling_price)}</div>
+                        <p style="color: var(--text-secondary); margin-top: 1rem;">
+                            Based on ${data.car_name} specifications
+                        </p>
+                    </div>
+                `;
+            } catch (error) {
+                errorDiv.textContent = `Error: ${error.message}. Please make sure the API is running.`;
+                errorDiv.classList.add('active');
+            } finally {
+                loading.classList.remove('active');
+            }
+        });
+
+        // Compare Cars Form
+        document.getElementById('compareForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const car1 = {};
+            const car2 = {};
+
+            formData.forEach((value, key) => {
+                if (key.startsWith('car1_')) {
+                    const fieldName = key.replace('car1_', '');
+                    if (['vehicle_age', 'km_driven', 'engine', 'seats'].includes(fieldName)) {
+                        car1[fieldName] = parseInt(value);
+                    } else if (['mileage', 'max_power'].includes(fieldName)) {
+                        car1[fieldName] = parseFloat(value);
+                    } else {
+                        car1[fieldName] = value;
+                    }
+                } else if (key.startsWith('car2_')) {
+                    const fieldName = key.replace('car2_', '');
+                    if (['vehicle_age', 'km_driven', 'engine', 'seats'].includes(fieldName)) {
+                        car2[fieldName] = parseInt(value);
+                    } else if (['mileage', 'max_power'].includes(fieldName)) {
+                        car2[fieldName] = parseFloat(value);
+                    } else {
+                        car2[fieldName] = value;
+                    }
+                }
+            });
+
+            const loading = document.getElementById('compareLoading');
+            const errorDiv = document.getElementById('compareError');
+            const resultDiv = document.getElementById('compareResult');
+
+            loading.classList.add('active');
+            errorDiv.classList.remove('active');
+            resultDiv.innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/compare/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ car1, car2 })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Comparison failed');
+                }
+
+                const result = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="result-card">
+                        <h3>Price Comparison Results</h3>
+                        <div class="comparison-grid">
+                            <div class="car-result">
+                                <h4>${result.car1_name}</h4>
+                                <div class="price">${formatCurrency(result.car1_price)}</div>
+                                ${result.cheaper_car === result.car1_name ? 
+                                    '<span class="winner-badge">Better Value</span>' : ''}
+                            </div>
+                            <div class="vs">VS</div>
+                            <div class="car-result">
+                                <h4>${result.car2_name}</h4>
+                                <div class="price">${formatCurrency(result.car2_price)}</div>
+                                ${result.cheaper_car === result.car2_name ? 
+                                    '<span class="winner-badge">Better Value</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="difference">
+                            <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">Price Difference</p>
+                            <div class="difference-amount">${formatCurrency(result.price_difference)}</div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                errorDiv.textContent = `Error: ${error.message}. Please make sure the API is running.`;
+                errorDiv.classList.add('active');
+            } finally {
+                loading.classList.remove('active');
+            }
+        });
+
+        // Initialize
+        checkAPIStatus();
+        setInterval(checkAPIStatus, 30000); // Check every 30 seconds
+    </script>
+</body>
+</html>
