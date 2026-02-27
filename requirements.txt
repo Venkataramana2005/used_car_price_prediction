@@ -5,6 +5,3 @@ pandas
 numpy
 joblib
 scikit-learn
-seaborn
-matplotlib
-xgboost
