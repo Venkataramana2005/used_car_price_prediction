@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
-from model import load_model
-from schemas import CompareCarsRequest, ComparisionResult
+from app.model import load_model
+from app.schemas import CompareCarsRequest, ComparisionResult
 
 model = load_model()
 
