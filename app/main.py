@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 import joblib
-from model import load_model
-from comparision import compare_cars
-from predict import predict
-from schemas import CarFeatures, SellingPrice, CompareCarsRequest, ComparisionResult
+from app.model import load_model
+from app.comparision import compare_cars
+from app.predict import predict
+from app.schemas import CarFeatures, SellingPrice, CompareCarsRequest, ComparisionResult
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
